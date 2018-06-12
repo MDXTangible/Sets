@@ -33,9 +33,7 @@ class Parser {
     // Nothing left to parse
     
     if (!tokens.hasNext()) {
-      Log("At End : "+stack);
       if (stack.hasError()) { // incomplete expr
-      Log("Err: ");
         return null;
       } else {
         
@@ -65,7 +63,6 @@ class Parser {
         // if empty, then we're starting with a BinOp
         // if top is not complete, then we've got two successive BinOps
 
-        Log("Null");
         return null;
       }
       BinExpr e = new BinExpr();
