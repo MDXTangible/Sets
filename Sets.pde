@@ -1,8 +1,7 @@
-// TUI interaction with sets and Venn Diagrams.
-// 
+// import the TUIO library
+import TUIO.*;
 
-import TUIO.*; 
-import java.util.Comparator; 
+import java.util.Comparator;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -17,26 +16,33 @@ HashMap<Integer, String> symbs= new HashMap();
 // objects : FidID -> MathSym
 HashMap<Integer, MathsSym> objects = new HashMap<Integer, MathsSym>();
 ArrayList<MathsSym> symList = new ArrayList();
+ArrayList<INPUTBOX> textboxes = new ArrayList<INPUTBOX>();
 
 ArrayList<Expr> expressions;
 
 int textPosY=100;
-int textPosX1=50;
+int textPosX1=650;
 int textPosX2=300;
-boolean drawObjs = false; // should we show the locations of TUIObjects?
+boolean drawObjs = false;
 
-boolean changed=true; // Has anything changed that needs draw() to re-display things?
+
+
+boolean changed=true;
 
 void setup() {
-  size(800, 700);
+  size (1350, 900);
+  
+  
+
 
   Calibration.setSize(width, height);
   Calibration.init(this);
 
   textSize(TEXTSIZE);
   rectMode(CENTER);
-
+  
   textAlign(CENTER, BOTTOM);
+
 
   symbs.put(11, UNION);
   symbs.put(12, INTER);
@@ -48,7 +54,7 @@ void setup() {
   symbs.put(2, "C");
   symbs.put(3, "D");
   symbs.put(4, "E");
-
+  
   symbs.put(5, "A");
   symbs.put(6, "B");
   symbs.put(7, "C");
@@ -59,14 +65,38 @@ void setup() {
   symbs.put(30, "("); // not used yet!
   symbs.put(31, ")");
 
+ INPUTBOX userTB = new INPUTBOX(650, 250,300, 35);
+
+  textboxes.add(userTB);
+
   tuioClient  = new TuioProcessing(this);
+  
+   
+
 }
 
 synchronized void draw() {
-  if (changed) { // only redraw if something has changed - should be much more efficient
+  
+  
+   fill(255);
+   textSize(24);
+   text("TYPE AN EXPRESSION", 650, 300);
+
+   
+
+   for (INPUTBOX t : textboxes) {
+      t.DRAW();
+   }
+  
+  
+  
+    if (changed) { // only redraw if something has changed - should be much more efficient
     drawScreen();
     changed=false;
   }
+  
+  
+
 }
 
 void drawScreen() {
@@ -78,7 +108,8 @@ void drawScreen() {
   }
 
   if (expressions==null) {
-    text("Null", textPosX1, textPosY);
+    fill(255);
+    text("Not a valid expression", textPosX1, textPosY);
   } else {
     if (expressions.isEmpty()) {
       text("Empty", textPosX1, textPosY);
@@ -88,12 +119,12 @@ void drawScreen() {
       for (int i=0; i<expressions.size(); i++ ) {
         Expr e = expressions.get(i);
         //textAlign(CENTER, CENTER);
-
-        textAlign(CENTER, BOTTOM);
+        
+    textAlign(CENTER, BOTTOM);
         text(e.toString(), (int)((i +0.5)* width/expressions.size()), textPosY);
         e.calcCircles( (int)((i +0.5)* width/expressions.size()), height/2);
       }
-
+      
       // draw all the circle fills
       for (int i =0; i<width; i++) {
         for (int j = 0; j<height; j++) {
@@ -109,6 +140,7 @@ void drawScreen() {
       for (Expr e : expressions) {
         e.drawCircles();
       }
+
     }
   }
 }
@@ -129,7 +161,6 @@ synchronized void addTuioObject(TuioObject obj) {
   int id = obj.getSymbolID();
   if (id==SHOWOBJS) {
     drawObjs=true;
-    changed=true;
     return;
   }
   String label = "X";
@@ -143,6 +174,8 @@ synchronized void addTuioObject(TuioObject obj) {
 
   objects.put(id, o);
   symList.add(o);
+  
+  Collections.sort(symList, comp);
   updateExpressions();
   changed=true;
 }
@@ -166,7 +199,6 @@ synchronized void removeTuioObject(TuioObject obj) {
   int id = obj.getSymbolID();
   if (id==SHOWOBJS) {
     drawObjs=false;
-    changed=true;
     return;
   }
   if (objects.containsKey(id)) {
@@ -189,12 +221,25 @@ Comparator<MathsSym> comp = new Comparator<MathsSym>() {
     } else if (o1.x>o2.x) { 
       return 1;
     } else { 
-      return 0; 
+      return 0;
     }
   }
 };
 
 
+void mousePressed() {
+   for (INPUTBOX t : textboxes) {
+      t.PRESSED(mouseX, mouseY);
+   }
+}
+
+
 void keyPressed() {
-  Calibration.keyPressed(keyCode, key); 
+  Calibration.keyPressed(keyCode, key);
+  
+  for (INPUTBOX t : textboxes) {
+      if (t.KEYPRESSED(key, (int)keyCode)) {
+
+      }
+   }
 }

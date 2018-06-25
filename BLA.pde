@@ -25,7 +25,7 @@ public class INPUTBOX {
    }
    
    void DRAW() {
-
+      pushStyle();
       if (selected) {
          fill(BackgroundSelected);
       } else {
@@ -44,6 +44,7 @@ public class INPUTBOX {
       fill(Foreground);
       textSize(TEXTSIZE);
       text(Text, X + (textWidth("a") / 2), Y + TEXTSIZE);
+      popStyle();
    }
    
  
