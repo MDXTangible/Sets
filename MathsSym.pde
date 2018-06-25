@@ -11,11 +11,9 @@ class MathsSym {
 
     pushStyle();
     stroke(255, 150, 150, 100);
-    fill(20);
-    
+    fill(255);
     textSize(15);
     textAlign(CENTER, CENTER);
-
     pushMatrix();
     translate(
       (int)Calibration.transformX(x), 

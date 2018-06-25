@@ -1,15 +1,13 @@
 // -------------------------------------------------------------
 abstract class Expr {
 
-  // Expr = BinExpr | NameExpr | ( Expr ) | ... 
+  // Expr = BinExpr | NameExpr | ... 
   // BinExpr = Expr Op Expr
   // NameExpr = A | B | ....
 
-  // Op = union | intersect | diff | ...
+  // Op = \ union | \ intersect | \ diff | ...
 
-  // plus: Unary ops? Empty
-  
-  // More complex: things with bool vals - subset? member?
+  // plus: brackets? Unary ops? Empty
 
   MathsSym sym; 
 
@@ -18,6 +16,9 @@ abstract class Expr {
   boolean isBinExpr() {
     return false;
   } 
+  boolean isNumExpr() {
+    return false;
+  }
   boolean isNameExpr() {
     return false;
   }
@@ -62,9 +63,7 @@ abstract class Expr {
   abstract HashSet<NameExpr> getNames();
 
   ArrayList<NameExpr> getNamesList() {
-    HashSet<NameExpr> s=getNames();
-    ArrayList<NameExpr>  l = new ArrayList(s);
-
+    ArrayList<NameExpr>  l = new ArrayList(getNames());
     Collections.sort(l);
     return l;
   }
@@ -82,29 +81,22 @@ class NameExpr extends Expr implements Comparable {
     return name.compareTo(((NameExpr)o).name);
   }
   boolean equals(Object o) {
-    //Log("EQ: "+ this + " == "+o);
     if (o.getClass() == this.getClass()) {
-      //Log("Y");
       return (name.equals(((NameExpr)o).name));
     }
     return super.equals(o);
   }
 
-  int hashCode() {
-    return name.hashCode();
-  }
-
   String toString() {
     return name;
   }
-  
+
+
   HashSet<NameExpr> getNames() {
-    Log("HS with: "+ this);
     HashSet a =  new HashSet();
     a.add(this);
     return a;
   }
-
   void setLoc(int x, int y) {
     xLoc=x; // record where we're drawing this!
     yLoc=y;
@@ -114,7 +106,7 @@ class NameExpr extends Expr implements Comparable {
     pushStyle();
     ellipseMode(CENTER);
     textAlign(CENTER, CENTER);
-
+    
     noFill();
     stroke(255);
     ellipse(xLoc, yLoc, cRad, cRad);
@@ -148,19 +140,13 @@ class BinExpr extends Expr {
   }
 
   HashSet<NameExpr> getNames() {
-    HashSet<NameExpr> a =  new HashSet<NameExpr>();
-    Log ("L :"+left + " R: "+right);
+    HashSet a =  new HashSet();
     if (left != null) {
-      Log(" LS: "+left.getNames());
       a.addAll(left.getNames());
     }
     if (right != null) {
       a.addAll(right.getNames());
-      Log(" RS: "+right.getNames());
     }
-
-
-    Log(" All: "+a);
     return a;
   }
 
