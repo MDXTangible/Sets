@@ -11,8 +11,8 @@ class MathsSym {
 
     pushStyle();
     stroke(255, 150, 150, 100);
-    fill(255);
-    textSize(15);
+    fill(0);
+    textSize(100);
     textAlign(CENTER, CENTER);
     pushMatrix();
     translate(
@@ -22,10 +22,9 @@ class MathsSym {
     rect(0, 0, 2*size, size, rad, rad, rad, rad);
     popMatrix();
 
-    //fill(textCol);
-   fill(255);
+     fill(255);
     text(text, (int)Calibration.transformX(x), 
-      (int)Calibration.transformY(y));
+    (int)Calibration.transformY(y));
     popStyle();
   }
 

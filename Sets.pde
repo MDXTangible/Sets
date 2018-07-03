@@ -82,11 +82,11 @@ void setup() {
 synchronized void draw() {
   
   
-   fill(255);
+   //fill(255);
    textSize(24);
    text("TYPE AN EXPRESSION", 650, 300);
   textFont(f);  
-  fill(0);  
+  fill(255);  
   text(buffer, textPosX1 + 50, textPosY + 50);  
   text(stored, textPosX1 + 100, textPosY + 100);
 
