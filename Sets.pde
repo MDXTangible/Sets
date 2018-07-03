@@ -16,7 +16,7 @@ HashMap<Integer, String> symbs= new HashMap();
 // objects : FidID -> MathSym
 HashMap<Integer, MathsSym> objects = new HashMap<Integer, MathsSym>();
 ArrayList<MathsSym> symList = new ArrayList();
-ArrayList<INPUTBOX> textboxes = new ArrayList<INPUTBOX>();
+
 
 ArrayList<Expr> expressions;
 
@@ -26,12 +26,16 @@ int textPosX2=300;
 boolean drawObjs = false;
 
 
+PFont f;
+String buffer = "";
+String stored = "";
+    
 
 boolean changed=true;
 
 void setup() {
   size (1350, 900);
-  
+    f = createFont("Arial", 16);
   
 
 
@@ -65,9 +69,9 @@ void setup() {
   symbs.put(30, "("); // not used yet!
   symbs.put(31, ")");
 
- INPUTBOX userTB = new INPUTBOX(650, 250,300, 35);
 
-  textboxes.add(userTB);
+
+
 
   tuioClient  = new TuioProcessing(this);
   
@@ -81,12 +85,11 @@ synchronized void draw() {
    fill(255);
    textSize(24);
    text("TYPE AN EXPRESSION", 650, 300);
+  textFont(f);  
+  fill(0);  
+  text(buffer, textPosX1 + 50, textPosY + 50);  
+  text(stored, textPosX1 + 100, textPosY + 100);
 
-   
-
-   for (INPUTBOX t : textboxes) {
-      t.DRAW();
-   }
   
   
   
@@ -227,19 +230,24 @@ Comparator<MathsSym> comp = new Comparator<MathsSym>() {
 };
 
 
-void mousePressed() {
-   for (INPUTBOX t : textboxes) {
-      t.PRESSED(mouseX, mouseY);
-   }
-}
 
 
 void keyPressed() {
-  Calibration.keyPressed(keyCode, key);
   
-  for (INPUTBOX t : textboxes) {
-      if (t.KEYPRESSED(key, (int)keyCode)) {
-
-      }
-   }
+  if (key == ENTER) { 
+    String[] splitString = split(buffer, " ");
+    //saved = splitString[0] + " + " + splitString[1] + " + " + splitString[2];    
+    for(int i = 0; i < splitString.length; i++) {
+      /*MathsSym o = new MathsSym();
+      o.text=splitString[i];
+      symList.add(o);*/
+      stored = stored + " " + splitString[i] + " "; //testing
+    }
+    buffer = "";  
+   
+  } else {    
+    buffer = buffer + key;   
+  }
+  
+  Calibration.keyPressed(keyCode, key);
 }
