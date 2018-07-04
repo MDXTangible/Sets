@@ -238,11 +238,38 @@ void keyPressed() {
     String[] splitString = split(buffer, " ");
     //saved = splitString[0] + " + " + splitString[1] + " + " + splitString[2];    
     for(int i = 0; i < splitString.length; i++) {
-      /*MathsSym o = new MathsSym();
-      o.text=splitString[i];
-      symList.add(o);*/
-      stored = stored + " " + splitString[i] + " "; //testing
+        
+        
+        
+        String capText = splitString[i].toUpperCase();
+        MathsSym o = new MathsSym();
+        switch(capText) {
+          case "UNION": o.text=UNION;
+           break;
+          case "N": o.text=INTER;
+           break;
+          case "/": o.text=DIFF;
+           break;
+          default:  o.text=capText;
+            break;
+        }
+      o.x=200;
+      o.y=200;
+      symList.add(o);
+      
+      
+    //  stored = stored + " " + splitString[i] + " "; //testing
     }
+    
+      Collections.sort(symList, comp);
+      updateExpressions();
+      changed=true;
+      if(changed) {
+      for (MathsSym to : objects.values()) {
+        to.draw();
+        changed=false;
+      }
+      }
     buffer = "";  
    
   } else {    
