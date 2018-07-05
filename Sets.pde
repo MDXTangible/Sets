@@ -28,7 +28,7 @@ boolean drawObjs = false;
 
 PFont f;
 String buffer = "";
-//String stored = "";
+
 
 
 boolean changed=true;
@@ -77,18 +77,6 @@ void setup() {
 }
 
 synchronized void draw() {
-
-
-  //fill(255);
-  textSize(24);
-  text("TYPE AN EXPRESSION", 650, 300);
-  textFont(f);  
-  fill(255);  
-  //text(stored, textPosX1 + 100, textPosY + 100);
-
-
-
-
   if (changed) { // only redraw if something has changed - should be much more efficient
     drawScreen();
     changed=false;
@@ -97,6 +85,14 @@ synchronized void draw() {
 
 void drawScreen() {
   background(50);
+
+  textSize(24);
+  text("TYPE AN EXPRESSION", 650, 300);
+  textFont(f);  
+  fill(255);  
+  //text(stored, textPosX1 + 100, textPosY + 100);
+
+
   if (drawObjs) { // 
     for (MathsSym to : objects.values()) {
       to.draw();
@@ -105,7 +101,7 @@ void drawScreen() {
 
 
   text(buffer, 200, 200);  
-  
+
   if (expressions==null) {
     fill(255);
     text("Not a valid expression", textPosX1, textPosY);
@@ -152,12 +148,6 @@ void updateExpressions() {
   Log("----------------------");
   Log("Tokens: "+symList);
   expressions = p.parse(symList);
-  // draw the circle outlines
- 
-  for (Expr e : expressions) {
-    Log(e.toString());
-    Log("===------------------");
-  }
 }
 
 
@@ -235,46 +225,61 @@ Comparator<MathsSym> comp = new Comparator<MathsSym>() {
 
 void keyPressed() {
 
-  if (key == ENTER) { 
-    String[] splitString = split(buffer, " ");
-    //saved = splitString[0] + " + " + splitString[1] + " + " + splitString[2];    
-    
-    symList = new ArrayList();
-    for (int i = 0; i < splitString.length; i++) {
-
-
-      String capText = splitString[i].toUpperCase();
-      MathsSym o = new MathsSym();
-      switch(capText) {
-      case "UNION": 
-        o.text=UNION;
-        break;
-      case "N": 
-        o.text=INTER;
-        break;
-      case "/": 
-        o.text=DIFF;
-        break;
-      default:  
-        o.text=capText;
-        break;
+  // Ignore 'special' keys that we don't care about
+  if (keyCode == SHIFT || keyCode == UP || keyCode == DOWN) {
+  } else
+    if (keyCode == BACKSPACE ) {
+      //println("BACKSPACE");
+      if (buffer.length()>0) {
+        buffer=buffer.substring(0, buffer.length()-1);
+        changed=true;
       }
-      //o.x=200;
-      //o.y=200;
-      symList.add(o);
+    } else
+      if (key == ENTER) { 
+        // Insert spaces around parentheses:
+        buffer=buffer.replaceAll("\\(", " ( ").replaceAll("\\)", " ) ");
+        
+        // split with a reg exp to catch multiple whitespace characters:
+        String[] splitString = buffer.split("\\s+");
 
+        symList = new ArrayList();
+        for (int i = 0; i < splitString.length; i++) {
 
-    }
+          // Don't change case - the SHIFT ket now works
+          String capText = splitString[i];
+          MathsSym o = new MathsSym();
 
-    // Collections.sort(symList, comp);
-    updateExpressions();
-    changed=true;
- 
-    buffer = "";
-  } else {    
-    buffer = buffer + key;
-    changed=true;
-  }
+          /*
+      switch(capText) {
+           case "UNION": 
+           o.text=UNION;
+           break;
+           case "N": 
+           o.text=INTER;
+           break;
+           case "/": 
+           o.text=DIFF;
+           break;
+           default:  
+           o.text=capText;
+           break;
+           }*/
+
+          o.text=capText;
+          //o.x=200;
+          //o.y=200;
+          symList.add(o);
+        }
+
+        updateExpressions();
+        changed=true;
+        
+        // Set the buffer to empty if we dom't want to be able to edit it:
+        //buffer = "";
+      } else {    
+        buffer = buffer + key;
+        changed=true;
+      }
 
   Calibration.keyPressed(keyCode, key);
 }

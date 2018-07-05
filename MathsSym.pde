@@ -29,19 +29,27 @@ class MathsSym {
   }
 
   String toString() {
+    //return "."+text+"["+text.length()+"]";
     return text;
   }
 
   boolean isName() {
-    return (text=="A" || text == "B" || text == "C" || text == "D"|| text == "E");
+    return ( text.equals("a") 
+    || text.equals("b") 
+    || text.equals("c") 
+    || text.equals("d") 
+    || text.equals("A") 
+    || text.equals("B") 
+    || text.equals("C") 
+    || text.equals("D") );
   }
   boolean isBinOp() {
-    return (text==UNION || text == INTER || text == DIFF);
+    return (text.equals(UNION) || text.equals(INTER) || text.equals(DIFF));
   }  
   boolean isOpen() {
-    return (text=="(");
+    return (text.equals("("));
   }  
   boolean isClose() {
-    return (text==")");
+    return (text.equals(")"));
   }
 }
