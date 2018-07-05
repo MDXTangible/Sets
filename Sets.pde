@@ -28,15 +28,15 @@ boolean drawObjs = false;
 
 PFont f;
 String buffer = "";
-String stored = "";
-    
+//String stored = "";
+
 
 boolean changed=true;
 
 void setup() {
   size (1350, 900);
-    f = createFont("Arial", 16);
-  
+  f = createFont("Arial", 16);
+
 
 
   Calibration.setSize(width, height);
@@ -44,7 +44,7 @@ void setup() {
 
   textSize(TEXTSIZE);
   rectMode(CENTER);
-  
+
   textAlign(CENTER, BOTTOM);
 
 
@@ -58,7 +58,7 @@ void setup() {
   symbs.put(2, "C");
   symbs.put(3, "D");
   symbs.put(4, "E");
-  
+
   symbs.put(5, "A");
   symbs.put(6, "B");
   symbs.put(7, "C");
@@ -74,32 +74,25 @@ void setup() {
 
 
   tuioClient  = new TuioProcessing(this);
-  
-   
-
 }
 
 synchronized void draw() {
-  
-  
-   //fill(255);
-   textSize(24);
-   text("TYPE AN EXPRESSION", 650, 300);
+
+
+  //fill(255);
+  textSize(24);
+  text("TYPE AN EXPRESSION", 650, 300);
   textFont(f);  
   fill(255);  
-  text(buffer, textPosX1 + 50, textPosY + 50);  
-  text(stored, textPosX1 + 100, textPosY + 100);
+  //text(stored, textPosX1 + 100, textPosY + 100);
 
-  
-  
-  
-    if (changed) { // only redraw if something has changed - should be much more efficient
+
+
+
+  if (changed) { // only redraw if something has changed - should be much more efficient
     drawScreen();
     changed=false;
   }
-  
-  
-
 }
 
 void drawScreen() {
@@ -110,6 +103,9 @@ void drawScreen() {
     }
   }
 
+
+  text(buffer, 200, 200);  
+  
   if (expressions==null) {
     fill(255);
     text("Not a valid expression", textPosX1, textPosY);
@@ -122,12 +118,12 @@ void drawScreen() {
       for (int i=0; i<expressions.size(); i++ ) {
         Expr e = expressions.get(i);
         //textAlign(CENTER, CENTER);
-        
-    textAlign(CENTER, BOTTOM);
+
+        textAlign(CENTER, BOTTOM);
         text(e.toString(), (int)((i +0.5)* width/expressions.size()), textPosY);
         e.calcCircles( (int)((i +0.5)* width/expressions.size()), height/2);
       }
-      
+
       // draw all the circle fills
       for (int i =0; i<width; i++) {
         for (int j = 0; j<height; j++) {
@@ -143,7 +139,6 @@ void drawScreen() {
       for (Expr e : expressions) {
         e.drawCircles();
       }
-
     }
   }
 }
@@ -157,6 +152,12 @@ void updateExpressions() {
   Log("----------------------");
   Log("Tokens: "+symList);
   expressions = p.parse(symList);
+  // draw the circle outlines
+ 
+  for (Expr e : expressions) {
+    Log(e.toString());
+    Log("===------------------");
+  }
 }
 
 
@@ -177,7 +178,7 @@ synchronized void addTuioObject(TuioObject obj) {
 
   objects.put(id, o);
   symList.add(o);
-  
+
   Collections.sort(symList, comp);
   updateExpressions();
   changed=true;
@@ -233,48 +234,47 @@ Comparator<MathsSym> comp = new Comparator<MathsSym>() {
 
 
 void keyPressed() {
-  
+
   if (key == ENTER) { 
     String[] splitString = split(buffer, " ");
     //saved = splitString[0] + " + " + splitString[1] + " + " + splitString[2];    
-    for(int i = 0; i < splitString.length; i++) {
-        
-        
-        
-        String capText = splitString[i].toUpperCase();
-        MathsSym o = new MathsSym();
-        switch(capText) {
-          case "UNION": o.text=UNION;
-           break;
-          case "N": o.text=INTER;
-           break;
-          case "/": o.text=DIFF;
-           break;
-          default:  o.text=capText;
-            break;
-        }
-      o.x=200;
-      o.y=200;
-      symList.add(o);
-      
-      
-    //  stored = stored + " " + splitString[i] + " "; //testing
-    }
     
-      Collections.sort(symList, comp);
-      updateExpressions();
-      changed=true;
-      if(changed) {
-      for (MathsSym to : objects.values()) {
-        to.draw();
-        changed=false;
+    symList = new ArrayList();
+    for (int i = 0; i < splitString.length; i++) {
+
+
+      String capText = splitString[i].toUpperCase();
+      MathsSym o = new MathsSym();
+      switch(capText) {
+      case "UNION": 
+        o.text=UNION;
+        break;
+      case "N": 
+        o.text=INTER;
+        break;
+      case "/": 
+        o.text=DIFF;
+        break;
+      default:  
+        o.text=capText;
+        break;
       }
-      }
-    buffer = "";  
-   
+      //o.x=200;
+      //o.y=200;
+      symList.add(o);
+
+
+    }
+
+    // Collections.sort(symList, comp);
+    updateExpressions();
+    changed=true;
+ 
+    buffer = "";
   } else {    
-    buffer = buffer + key;   
+    buffer = buffer + key;
+    changed=true;
   }
-  
+
   Calibration.keyPressed(keyCode, key);
 }
