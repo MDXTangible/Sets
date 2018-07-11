@@ -1,16 +1,20 @@
 // import the TUIO library
 import TUIO.*;
+import controlP5.*;
 
 import java.util.Comparator;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 
+
+ControlP5 cp5;
+
 MathsSym m;
 
 // declare a TuioProcessing client
 TuioProcessing tuioClient;
-
+String[] textfieldNames = {"Enter an expression"};
 HashMap<Integer, String> symbs= new HashMap();
 
 // objects : FidID -> MathSym
@@ -37,7 +41,25 @@ void setup() {
   size (1350, 900);
   f = createFont("Arial", 16);
 
+ PFont font = createFont("arial",20);
 
+  cp5 = new ControlP5(this);
+
+  int y = 550;
+  int x = 100;
+  int spacing = 100;
+  for(String name: textfieldNames){
+    cp5.addTextfield(name)
+       .setPosition(y,x)
+       .setSize(233,30)
+       .setFont(font)
+       .setFocus(true)
+       .setColor(color(255))
+       ;
+     y += spacing;
+  }
+
+  textFont(font);
 
   Calibration.setSize(width, height);
   Calibration.init(this);
@@ -87,7 +109,7 @@ void drawScreen() {
   background(50);
 
   textSize(24);
-  text("TYPE AN EXPRESSION", 650, 300);
+  //text("TYPE AN EXPRESSION", 650, 300);
   textFont(f);  
   fill(255);  
   //text(stored, textPosX1 + 100, textPosY + 100);
@@ -100,7 +122,7 @@ void drawScreen() {
   }
 
 
-  text(buffer, 200, 200);  
+  text("Current input:" + "" + buffer , 233, 30);  
 
   if (expressions==null) {
     fill(255);
@@ -249,21 +271,6 @@ void keyPressed() {
           String capText = splitString[i];
           MathsSym o = new MathsSym();
 
-          /*
-      switch(capText) {
-           case "UNION": 
-           o.text=UNION;
-           break;
-           case "N": 
-           o.text=INTER;
-           break;
-           case "/": 
-           o.text=DIFF;
-           break;
-           default:  
-           o.text=capText;
-           break;
-           }*/
 
           o.text=capText;
           //o.x=200;
